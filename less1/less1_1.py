@@ -4,7 +4,7 @@ import requests
 from pprint import pprint
 import json
 
-user = 'byiv'
+user = input('Введите имя пользователя github: ')
 url = f'https://api.github.com/users/{user}/repos'
 headers = {'Accept': 'application/vnd.github.v3+json'}
 
