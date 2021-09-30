@@ -15,5 +15,5 @@ j_data = response.json()
 for i in j_data:
     print(f"Repo name: {i['name']}, url: {i['url']}")
 
-with open('data.json', 'w') as file:
+with open('data_1.json', 'w') as file:
     json.dump(j_data, file)
