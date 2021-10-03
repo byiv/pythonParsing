@@ -55,7 +55,7 @@ while True:
         try:
             vacancy_salary = vacancy.find('span', attrs={'data-qa': 'vacancy-serp__vacancy-compensation'}).text
             vacancy_salary = vacancy_salary.replace('\u202f', '')
-            vacancy_salary = re.split(r'\s|<|>', vacancy_salary)
+            vacancy_salary = re.split(r'\s', vacancy_salary)
 
             vacancy_salary_currency = vacancy_salary[-1]
             if vacancy_salary[0] == 'от':
@@ -82,7 +82,6 @@ while True:
         break
 
     params['page'] += 1
-
 
 with open('vacancy_data.json', 'w') as file_json:
     json.dump(position_data, file_json)
