@@ -17,10 +17,10 @@ class HhruSpider(scrapy.Spider):
         for link in links:
             yield response.follow(link, callback=self.vacancy_parse)
 
-
     def vacancy_parse(self, response: HtmlResponse):
+        link = response.url
         name = response.xpath('//h1[@data-qa="vacancy-title"]/text()').get()
         salary = response.xpath('//p[@class="vacancy-salary"]/span/text()').getall()
-        item = JobparserItem(name=name, salary=salary, link=response.url)
+        item = JobparserItem(name=name, salary=salary, link=link)
         yield item
 
