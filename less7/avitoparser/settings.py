@@ -19,6 +19,7 @@ LOG_LEVEL = 'DEBUG'     # INFO ERROR
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' \
               'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'
 
+IMAGES_STORE = 'photos'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
@@ -67,6 +68,7 @@ COOKIES_ENABLED = True
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'avitoparser.pipelines.AvitoparserPipeline': 300,
+   'avitoparser.pipelines.AvitoPhotosPipeline': 200
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
