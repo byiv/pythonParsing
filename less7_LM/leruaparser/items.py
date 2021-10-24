@@ -15,7 +15,7 @@ def clear_price(value):
     return value
 
 
-def clear_params_dd(value):
+def clear_specifications_dd(value):
     try:
         value = value.replace('\n', '').strip()
     except:
@@ -29,7 +29,7 @@ class LeruaparserItem(scrapy.Item):
     name = scrapy.Field(output_processor=TakeFirst())
     price = scrapy.Field(input_processor=MapCompose(clear_price), output_processor=TakeFirst())
     photo = scrapy.Field()
-    specifications_dd = scrapy.Field(input_processor=MapCompose(clear_params_dd))
+    specifications_dd = scrapy.Field(input_processor=MapCompose(clear_specifications_dd))
     specifications_dt = scrapy.Field()
     specifications = scrapy.Field()
     _id = scrapy.Field()
