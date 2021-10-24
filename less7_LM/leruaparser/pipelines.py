@@ -12,6 +12,10 @@ from scrapy.pipelines.images import ImagesPipeline
 
 class LeruaparserPipeline:
     def process_item(self, item, spider):
+        item['specifications'] = dict(zip(item['specifications_dt'], item['specifications_dd']))
+        del item['specifications_dt']
+        del item['specifications_dd']
+        print()
         return item
 
 

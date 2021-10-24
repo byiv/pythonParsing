@@ -26,4 +26,6 @@ class LeruaSpider(scrapy.Spider):
         loader.add_xpath('name', "//h1/text()")
         loader.add_xpath('price', "//span[@slot='price']/text()")
         loader.add_xpath('photo', "//img[contains(@slot,'thumbs')]/@src")
+        loader.add_xpath('specifications_dd', "//div[@class='def-list__group']/dd/text()")
+        loader.add_xpath('specifications_dt', "//div[@class='def-list__group']/dt/text()")
         yield loader.load_item()
