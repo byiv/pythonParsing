@@ -2,6 +2,7 @@ import scrapy
 from scrapy.http import HtmlResponse
 import re
 import json
+from pprint import pprint
 from urllib.parse import urlencode
 from copy import deepcopy
 from instaparser.items import InstaparserItem
@@ -17,8 +18,7 @@ class InstagramSpider(scrapy.Spider):
     inst_pwd = pwd
     users_for_parse = ['buneeva.design',
                        'byzov_is']
-    graphql_url = 'https://www.instagram.com/graphql/query/?'
-    post_hash = '8c2a529969ee035a5063f2fc8602a0fd'
+    api_url = 'https://i.instagram.com/api/v1/friendships'
 
     def parse(self, response: HtmlResponse):
         csrf = self.fetch_csrf_token(response.text)
@@ -46,37 +46,46 @@ class InstagramSpider(scrapy.Spider):
 
     def user_parse(self, response: HtmlResponse, username):
         user_id = self.fetch_user_id(response.text, username)
-        variables = {'id': user_id, 'first': 12}
-        user_posts = f'{self.graphql_url}query_hash={self.post_hash}&{urlencode(variables)}'
+        params = {'count': 12, 'max_id': 0}
+        friends = ['following', 'followers']
+        for friend in friends:
+            if friend == 'followers':
+                params['search_surface'] = 'follow_list_page'
+            user_friends_url = f'{self.api_url}/{user_id}/{friend}/?{urlencode(params)}'
+            print()
+            yield response.follow(user_friends_url,
+                                  callback=self.user_parse_friend,
+                                  cb_kwargs={'username': username,
+                                             'user_id': user_id,
+                                             'params': deepcopy(params),
+                                             'friend': friend
+                                             }
+                                  )
 
-        yield response.follow(user_posts,
-                              callback=self.user_post_parser,
-                              cb_kwargs={'username': username,
-                                         'user_id': user_id,
-                                         'variables': deepcopy(variables)
-                                         }
-                              )
-
-    def user_post_parser(self, response: HtmlResponse, username, user_id, variables):
+    def user_parse_friend(self, response: HtmlResponse, username, user_id, params, friend):
         j_data = response.json()
-        page_info = j_data.get('data').get('user').get('edge_owner_to_timeline_media').get('page_info')
-        if page_info.get('has_next_page'):
-            variables['after'] = page_info.get('end_cursor')
-        user_posts = f'{self.graphql_url}query_hash={self.post_hash}&{urlencode(variables)}'
-        yield response.follow(user_posts,
-                              callback=self.user_post_parser,
-                              cb_kwargs={'username': username,
-                                         'user_id': user_id,
-                                         'variables': deepcopy(variables)
-                                         }
-                              )
-        posts = j_data.get('data').get('user').get('edge_owner_to_timeline_media').get('edges')
-        for post in posts:
-            item = InstaparserItem(user_id=user_id,
-                                   username=username,
-                                   photo=post.get('node').get('display_url'),
-                                   like=post.get('node').get('edge_media_preview_like').get('count'),
-                                   post_data=post.get('node')
+        next_max_id = j_data.get('next_max_id')
+        if next_max_id:
+            params['max_id'] = next_max_id
+            user_friends_url = f'{self.api_url}/{user_id}/{friend}/?{urlencode(params)}'
+            print()
+            yield response.follow(user_friends_url,
+                                  callback=self.user_parse_friend,
+                                  cb_kwargs={'username': username,
+                                             'user_id': user_id,
+                                             'params': deepcopy(params),
+                                             'friend': friend
+                                             }
+                                  )
+        users = j_data.get('users')
+        print()
+        for user in users:
+            item = InstaparserItem(main_id=user_id,
+                                   main_username=username,
+                                   user_id=user.get('pk'),
+                                   user_name=user.get('username'),
+                                   user_photo=user.get('profile_pic_url'),
+                                   type_friend=friend
                                    )
             yield item
 

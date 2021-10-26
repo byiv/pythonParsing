@@ -14,8 +14,9 @@ NEWSPIDER_MODULE = 'instaparser.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0'
-# USER_AGENT = 'Instagram 155.0.0.37.107'
+# USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0'
+USER_AGENT = 'Instagram 155.0.0.37.107'
+IMAGES_STORE = 'photos'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -68,6 +69,7 @@ COOKIES_ENABLED = True
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'instaparser.pipelines.InstaparserPipeline': 300,
+   'instaparser.pipelines.InstaPhotosPipeline': 200
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -81,7 +83,7 @@ AUTOTHROTTLE_MAX_DELAY = 60
 # each remote server
 AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
 # Enable showing throttling stats for every response received:
-AUTOTHROTTLE_DEBUG = True
+# AUTOTHROTTLE_DEBUG = True
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
