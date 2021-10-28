@@ -28,21 +28,28 @@ time.sleep(10)
 
 link = driver.find_element(By.XPATH, '//a[contains(@class, "letter")]')
 driver.get(link.get_attribute('href'))
-mails = []
+# mails = []
 flag = True
 
 while flag:
-    mail_data = {}
+    mail_data = dict()
     mail_data['title'] = wait.until(EC.presence_of_element_located((By.XPATH, '//h2'))).text
-    mail_data['from'] = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="letter__author"]/span'))).get_attribute('title')
-    mail_data['date'] = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="letter__author"]/div[@class="letter__date"]'))).text
+    mail_data['from'] = wait.until(EC.presence_of_element_located((By.XPATH,
+                                                                   '//div[@class="letter__author"]/span'))
+                                   ).get_attribute('title')
+    mail_data['date'] = wait.until(EC.presence_of_element_located((By.XPATH,
+                                                                   '//div[@class="letter__author"]'
+                                                                   '/div[@class="letter__date"]'))
+                                   ).text
     mail_data['text'] = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="letter__body"]'))).text
     try:
         letter.insert_one(mail_data)
     except Exception as e:
         print(e)
     time.sleep(1)
-    next_mail = wait.until(EC.presence_of_element_located((By.XPATH, '//div[contains(@class, "portal-menu-element_next")]/span'))).get_attribute('data-title-shortcut')
+    next_mail = wait.until(EC.presence_of_element_located((By.XPATH,
+                                                           '//div[contains(@class, "portal-menu-element_next")]/span'))
+                           ).get_attribute('data-title-shortcut')
     if next_mail is None:
         flag = False
     ActionChains(driver).key_down(Keys.CONTROL).send_keys('k').key_up(Keys.CONTROL).perform()
