@@ -32,7 +32,7 @@ mails = []
 flag = True
 
 while flag:
-    mail_data = []
+    mail_data = {}
     mail_data['title'] = wait.until(EC.presence_of_element_located((By.XPATH, '//h2'))).text
     mail_data['from'] = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="letter__author"]/span'))).get_attribute('title')
     mail_data['date'] = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="letter__author"]/div[@class="letter__date"]'))).text
